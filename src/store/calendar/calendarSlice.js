@@ -1,23 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { addHours } from 'date-fns';
+//import { addHours } from 'date-fns';
 
-const tempEvent = {
-    _id: new Date().getTime(),
-    title: 'Cumpleaños del Jafe',
-    notes: 'Hay que comprar el pastel',
-    start: new Date(),
-    end: addHours( new Date(), 2 ),
-    bgColor: '#fafafa',
-    user: {
-        _id: '123',
-        name: 'Fernando'
-    }
-}
+// const tempEvent = {
+//     _id: new Date().getTime(),
+//     title: 'Cumpleaños del Jafe',
+//     notes: 'Hay que comprar el pastel',
+//     start: new Date(),
+//     end: addHours( new Date(), 2 ),
+//     bgColor: '#fafafa',
+//     user: {
+//         _id: '123',
+//         name: 'Fernando'
+//     }
+// }
 
 export const calendarSlice = createSlice({
     name: 'calendar',
     initialState: {
-        event: [ tempEvent ],
+        isLoadingEvents: true,
+        event: [ ],
         activeEvent: null
     },
     reducers: {
@@ -30,7 +31,7 @@ export const calendarSlice = createSlice({
         },
         onUpdateEvent: ( state, action ) => {
             state.event = state.event.map( event => {
-                if ( event._id === action.payload._id ){
+                if ( event.id === action.payload.id ){
                     return action.payload;
                 }
                 return event
@@ -39,13 +40,29 @@ export const calendarSlice = createSlice({
         onDeleteEvent: ( state ) => {
             if( state.activeEvent ) {
                 state.event = state.event.filter(
-                    event => event._id !== state.activeEvent._id
+                    event => event.id !== state.activeEvent.id
                 );
                 state.activeEvent = null;
             }
-
+        },
+        onLoadEvents: ( state, { payload = [] } ) => {
+            state.isLoadingEvents = false;
+            //state.event = payload;
+            payload.forEach( event => {
+                const exists = state.event.some( 
+                    dbEvent => dbEvent.id === event.id );
+                if( !exists ){
+                    state.event.push( event );
+                }
+            } );
+        },
+        onLogoutCalendar: (state) => {
+            state.isLoadingEvents= true,
+            state.event= [ ],
+            state.activeEvent = null
 
         }
+
     }
 });
 
@@ -54,6 +71,8 @@ export const calendarSlice = createSlice({
 export const { 
     onAddNewEvent, 
     onDeleteEvent, 
+    onLoadEvents,
+    onLogoutCalendar,
     onSetActiveEvent, 
     onUpdateEvent,
     } = calendarSlice.actions;
