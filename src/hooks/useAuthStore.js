@@ -39,7 +39,7 @@ export const useAuthStore = ()  => {
 
         }catch(error){
             // se pone así cuando el error viene del backend
-            console.log(error)
+            //console.log(error)
             dispatch( onLogout( error.response.data?.msg || '' ) );
             setTimeout( () => {
                 dispatch( clearErrorMessage() );

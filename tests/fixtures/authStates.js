@@ -17,7 +17,7 @@ export const authenticatedState = {
 }
 
 export const notauthenticatedState = {
-        status: 'notauthenticated',
+        status: 'not-authenticated',
         user: {},
         errorMessage: undefined,
     }
